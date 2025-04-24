@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      header {
+        background-color: black;
+        padding: 16px;
+        color: white;
+        align-items: center;
+        text-align: center;
+      }
+
+      .column-proyek {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        padding: 0 16px;
+        margin-top: 16px;
+        flex-direction: row;
+      }
+
+      .about {
+        padding-top: 24px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .proyek {
+        margin-top: 32px;
+        padding-top: 16px;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .container-keahlian {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+      }
+
+      .column-keahlian {
+        display: flex;
+        gap: 8px;
+      }
+
+      .keahlian {
+        margin-top: 32px;
+        text-align: center;
+        padding-top: 16px;
+        justify-content: center;
+      }
+
+      .column-keahlian div {
+        color: white;
+        background-color: black;
+        padding: 8px;
+        border-radius: 4px;
+      }
+
+      .kontak {
+        background-color: black;
+        color: white;
+        text-align: center;
+        padding-top: 32px;
+        padding-bottom: 16px;
+      }
+
+      .kontak p {
+        margin-bottom: 8px;
+      }
+
+      .proyek p {
+        margin-top: 16px;
+      }
+
+      .column-proyek > div {
+        background-color: rgba(231, 231, 231, 0.338);
+        padding: 16px;
+        border-radius: 4px;
+        width: 350px;
+        text-align: left;
+      }
+
+      .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid black;
+      }
+
+      @media (max-width: 800px) {
+        .column-proyek {
+          display: flex;
+          gap: 16px;
+          justify-content: center;
+          padding: 0 16px;
+          margin-top: 16px;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Nama Saya</h1>
+        <p style="margin: 16px 0 16px 0">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+      </div>
+    </header>
+    <main>
+      <section class="about">
+        <img src="images.png" alt="Profile" class="profile-image" />
+        <h1 style="margin-top: 24px">Tentang Saya</h1>
+        <p style="margin-top: 16px">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro neque
+          eum explicabo commodi natus numquam incidunt odio. Lorem ipsum dolor
+          sit amet consectetur adipisicing elit. Itaque perspiciatis magni
+          rerum?
+        </p>
+      </section>
+
+      <section class="proyek">
+        <h1>Proyek Terbaru</h1>
+        <div class="column-proyek">
+          <div>
+            <h3>E-Commerece Website</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+          </div>
+          <div>
+            <h3>Aplikasi Manajemen Tugas</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veniam
+              repellat doloremque ut vero accusamus sapiente odio dolor eligendi
+              corporis atque!
+            </p>
+          </div>
+          <div>
+            <h3>Website Portifolio Fotografi</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla,
+              repellendus nam? Illo voluptatem nobis ea expedita.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="keahlian">
+        <h1>Keahlian</h1>
+        <div class="container-keahlian">
+          <div class="column-keahlian">
+            <div>Typescript</div>
+            <div>HTML</div>
+            <div>CSS</div>
+            <div>ga tau</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="kontak">
+        <div>
+          <h1>Kontak</h1>
+          <p style="margin-top: 32px">email soksod@email.com</p>
+          <p>No Hp: 08123456789</p>
+          <p>Alamat: Jl. Raya, No. 123</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
