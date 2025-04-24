@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="container text-center">
+      <form id="searchForm" class="mb-6">
+        <input
+          id="pokemonInput"
+          type="text"
+          placeholder="Cari nama Pokémon..."
+          class="px-4 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          type="submit"
+          class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Cari
+        </button>
+      </form>
+      <div id="card" class="w-64 mx-auto"></div>
+    </div>
+
+    <script>
+      async function fetchPokemon(name) {
+        try {
+          const response = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`
+          );
+          if (!response.ok) throw new Error("Pokémon tidak ditemukan");
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      }
+
+      function renderCard(data) {
+        const container = document.getElementById("card");
+        container.innerHTML = "";
+
+        if (!data) {
+          container.innerHTML =
+            '<p class="text-red-500">Pokémon tidak ditemukan.</p>';
+          return;
+        }
+
+        container.className =
+          "w-64 mx-auto bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center";
+
+        const image = document.createElement("img");
+        image.className = "w-32 h-32";
+        image.src = data.sprites.front_default;
+        image.alt = data.name;
+        container.appendChild(image);
+
+        const name = document.createElement("h1");
+        name.className = "text-xl font-bold capitalize mt-4";
+        name.textContent = data.name;
+        container.appendChild(name);
+
+        const height = document.createElement("p");
+        height.className = "text-sm text-gray-500 mt-2";
+        height.textContent = `Tinggi: ${data.height}`;
+        container.appendChild(height);
+
+        const weight = document.createElement("p");
+        weight.className = "text-sm text-gray-500 mt-2";
+        weight.textContent = `Berat: ${data.weight}`;
+        container.appendChild(weight);
+      }
+
+      const form = document.getElementById("searchForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const input = document.getElementById("pokemonInput").value.trim();
+        if (input) {
+          const data = await fetchPokemon(input);
+          renderCard(data);
+        }
+      });
+    </script>
+  </body>
+</html>

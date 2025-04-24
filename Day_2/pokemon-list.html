@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokemon List</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-4">
+      <h1 class="text-3xl font-bold mb-6 text-center">Daftar Pokémon</h1>
+
+      <div
+        id="loading"
+        class="text-center text-blue-600 font-medium mb-4 hidden"
+      >
+        Loading...
+      </div>
+
+      <div
+        id="grid"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6"
+      ></div>
+
+      <div class="flex justify-center gap-4">
+        <button
+          id="prev"
+          class="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button id="next" class="bg-blue-500 text-white px-4 py-2 rounded">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Detail -->
+    <div
+      id="modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md relative">
+        <button
+          id="closeModal"
+          class="absolute top-2 right-2 text-gray-500 text-lg font-bold"
+        >
+          &times;
+        </button>
+        <div id="modalContent" class="text-center"></div>
+      </div>
+    </div>
+
+    <script>
+      let offset = 0;
+      const limit = 15;
+
+      async function fetchPokemonList(limit = 15, offset = 0) {
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+        );
+        const result = await response.json();
+        return result.results;
+      }
+
+      async function fetchPokemonData(url) {
+        const response = await fetch(url);
+        return await response.json();
+      }
+
+      function createCard(pokemon) {
+        const card = document.createElement("div");
+        card.className =
+          "bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer transform transition-transform duration-300 hover:scale-105";
+
+        const img = document.createElement("img");
+        img.src = pokemon.sprites.front_default;
+        img.alt = pokemon.name;
+        img.className = "w-20 h-20 mb-2";
+
+        const name = document.createElement("h2");
+        name.className = "text-lg font-bold capitalize";
+        name.textContent = pokemon.name;
+
+        const height = document.createElement("p");
+        height.className = "text-sm text-gray-500 mt-2";
+        height.textContent = `Tinggi: ${pokemon.height}`;
+
+        const weight = document.createElement("p");
+        weight.className = "text-sm text-gray-500 mt-2";
+        weight.textContent = `Berat: ${pokemon.weight}`;
+
+        card.appendChild(img);
+        card.appendChild(name);
+        card.appendChild(weight);
+        card.appendChild(height);
+
+        card.addEventListener("click", () => showPokemonDetail(pokemon));
+
+        return card;
+      }
+
+      async function showPokemonDetail(pokemon) {
+        const modal = document.getElementById("modal");
+        const content = document.getElementById("modalContent");
+
+        const types = pokemon.types.map((t) => t.type.name).join(", ");
+        content.innerHTML = `
+          <img src="${pokemon.sprites.other["official-artwork"].front_default}" alt="${pokemon.name}" class="w-40 mx-auto mb-4">
+          <h2 class="text-2xl font-bold capitalize mb-2">${pokemon.name}</h2>
+          <p class="text-gray-600 mb-1">Tinggi: ${pokemon.height}</p>
+          <p class="text-gray-600 mb-1">Berat: ${pokemon.weight}</p>
+          <p class="text-gray-600 mb-2">Tipe: ${types}</p>
+        `;
+
+        modal.classList.remove("hidden");
+      }
+
+      function updatePaginationControls() {
+        document.getElementById("prev").disabled = offset === 0;
+      }
+
+      async function renderPokemonGrid() {
+        const grid = document.getElementById("grid");
+        const loading = document.getElementById("loading");
+
+        grid.innerHTML = "";
+        loading.classList.remove("hidden");
+
+        try {
+          const list = await fetchPokemonList(limit, offset);
+          for (const poke of list) {
+            const data = await fetchPokemonData(poke.url);
+            const card = createCard(data);
+            grid.appendChild(card);
+          }
+        } catch (error) {
+          grid.innerHTML = `<p class="text-red-600">Gagal memuat data Pokémon.</p>`;
+        } finally {
+          loading.classList.add("hidden");
+          updatePaginationControls();
+        }
+      }
+
+      document.getElementById("prev").addEventListener("click", () => {
+        if (offset >= limit) {
+          offset -= limit;
+          renderPokemonGrid();
+        }
+      });
+
+      document.getElementById("next").addEventListener("click", () => {
+        offset += limit;
+        renderPokemonGrid();
+      });
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("modal").classList.add("hidden");
+      });
+
+      renderPokemonGrid();
+    </script>
+  </body>
+</html>
