@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ProductType {
-    id: number;
-    name: string;
-    price: number;
-    category: string;
+    id: string;
     image: string;
+    name: string;
     stock: number;
+    price: number;
+    categoryId: string;
+    category: string
+    createdAt: Date;
+    updatedAt: Date;
   }
 
   export interface ProductStateType {

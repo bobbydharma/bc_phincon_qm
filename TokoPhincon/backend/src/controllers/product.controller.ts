@@ -6,13 +6,25 @@ class ProductController extends AbstractModel {
   async getAll(req: Request, res: Response): Promise<void> {
     try {
       const products = await db.Product.findAll({
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        include: {
+          model: db.Category,
+          attributes: ["name"],
+          as: "category",
+        },
       });
-      console.log("Test", products);
+
+      const formattedProducts = products.map((product: any) => {
+        const plainProduct = product.get({ plain: true });
+        return {
+          ...plainProduct,
+          category: plainProduct.category?.name || null,
+        };
+      });
+      
       res.json({
         status: "success",
         message: "Product fetched successfully",
-        data: products,
+        data: formattedProducts,
       });
     } catch (error: any) {
       res.json({
@@ -50,7 +62,6 @@ class ProductController extends AbstractModel {
       await db.Product.create(req.body, {
         attributes: { exclude: ["createdAt", "updatedAt"] },
       });
-      console.log("ini testing", req.body);
       res.json({
         status: "success",
         message: "Product created successfully",

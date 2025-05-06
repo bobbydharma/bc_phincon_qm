@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default abstract class ModelAPI {
-    abstract getById(id: number): Promise<any>;
+    abstract getById(id: string): Promise<any>;
     abstract getAll(): Promise<any>;
     abstract create(user: any): Promise<any>;
-    abstract update(id: number, user: any): Promise<any>;
-    abstract delete(id: number): Promise<any>;
+    abstract update(id: string, user: any): Promise<any>;
+    abstract delete(id: string): Promise<any>;
 }

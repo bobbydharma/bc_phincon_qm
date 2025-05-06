@@ -6,13 +6,16 @@ class ProductAPI extends ModelAPI {
     constructor() {
         super();
     }
-    async getById(id: number) {
+    async getById(id: string) {
         const response = await fetch(`${BASE_URL_API}/products/${id}`);
         const data = await response.json();
         return data;
     }
     async getAll() {
-        const response = await fetch(`${BASE_URL_API}/products`);
+        const response = await fetch(`${BASE_URL_API}/products`, {
+            method: "GET",
+            credentials: "include",
+        });
         const data = await response.json();
         return data;
     }
@@ -27,7 +30,7 @@ class ProductAPI extends ModelAPI {
         const data = await response.json();
         return data;
     }
-    async update(id: number, user: any) {
+    async update(id: string, user: any) {
         const response = await fetch(`${BASE_URL_API}/products/${id}`, {
             method: "PUT",
             headers: {
@@ -38,7 +41,7 @@ class ProductAPI extends ModelAPI {
         const data = await response.json();
         return data;
     }
-    async delete(id: number) {
+    async delete(id: string) {
         const response = await fetch(`${BASE_URL_API}/products/${id}`, {
             method: "DELETE",
         });

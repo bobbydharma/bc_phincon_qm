@@ -1,5 +1,5 @@
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
 import { Sequelize, DataTypes } from "sequelize";
 import process from "process";
 import configJson from "../config/database.js";

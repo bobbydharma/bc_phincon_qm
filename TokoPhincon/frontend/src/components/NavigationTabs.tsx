@@ -5,8 +5,9 @@ const NavigationTabs = () => {
   const location = useLocation();
   
   const tabs = [
-    { name: 'Products', path: '/' },
+    { name: 'Products', path: '/products' },
     { name: 'Add Product', path: '/manage-product' },
+    { name: 'Login', path: '/login' },
   ];
 
   return (

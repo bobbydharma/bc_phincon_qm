@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import type { ProductType } from "../types/product.type";
 import { ArrowLeft, Edit, X, Trash2 } from "lucide-react";
 import {
@@ -10,42 +9,38 @@ import {
   deleteProduct,
 } from "../features/products/Product.slice.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "../hooks/use-toast.tsx";
+import { createCart } from "../features/cart/Cart.slice.ts";
+import { CartFormType } from "../types/cart.type.ts";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<ProductType | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<ProductType | null>(null);
   const dispatch = useDispatch();
-  const products: ProductType[] = useSelector(
-    (state: any) => state.products.products
-  );
+  const { products, loading }: { products: ProductType[]; loading: boolean } =
+    useSelector((state: any) => state.products);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [quantity, setQuantity] = useState<number>(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) return;
-      const existing = products.find((p) => p.id === Number(id));
+      const existing = products.find((p) => p.id === id);
       if (existing) {
         setProduct(existing);
-        setLoading(false);
         return;
       }
       try {
-        setLoading(true);
         dispatch(getAllProducts() as any);
-        const updated = products.find((p) => p.id === Number(id));
+        const updated = products.find((p) => p.id === id);
         setProduct(updated || null);
       } catch (error) {
         console.error("Fetch via slice error:", error);
         setProduct(null);
-      } finally {
-        setLoading(false);
       }
     };
     fetchProduct();
@@ -59,7 +54,7 @@ const ProductDetailPage = () => {
   const handleDeleteClick = async () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await dispatch(deleteProduct(Number(id)) as any).unwrap();
+        await dispatch(deleteProduct(id ?? "") as any);
         console.log("Product deleted successfully");
         navigate("/");
       } catch (error) {
@@ -80,10 +75,45 @@ const ProductDetailPage = () => {
   const handleSave = async () => {
     if (!formData) return;
     setProduct(formData);
-    setIsUpdating(true); // mulai loading
+    setIsUpdating(true);
 
     try {
       await dispatch(updateProduct(formData) as any).unwrap();
+      toast({
+        title: "Success!",
+        description: "Product has been saved successfully",
+      });
+    } catch (error) {
+      console.log("error creating product", error);
+      toast({
+        title: "Error!",
+        description: "Failed to edit product",
+      });
+    } finally {
+      setIsUpdating(false); // selesai loading
+      setIsEditing(false);
+    }
+  };
+
+  const handleIncrease = () => {
+    setQuantity((prev) => {
+      if (product && prev < product.stock) {
+        return prev + 1;
+      }
+      return prev;
+    });
+  }
+
+  const handleDecrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+  const handleAddToCart = async () => {
+    try {
+      const cartData: CartFormType = {
+        productId: product?.id ?? "",
+        qty: quantity ?? 1,
+        totalPrice: product?.price ?? 0
+      };
+      await dispatch(createCart(cartData) as any).unwrap();
       toast({
         title: "Success!",
         description: "Product has been saved successfully",
@@ -193,6 +223,42 @@ const ProductDetailPage = () => {
                   : "Out of Stock"}
               </p>
             </div>
+
+            {/* Quantity selector + Add to Cart */}
+            {product.stock > 0 && (
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm font-medium">Quantity:</span>
+                  <div className="flex items-center border rounded-md px-2 py-1">
+                    <button
+                      onClick={handleDecrease}
+                      className="px-2 text-lg font-bold text-gray-600 hover:text-black"
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      value={quantity}
+                      readOnly
+                      className="w-10 text-center border-none focus:outline-none"
+                    />
+                    <button
+                      onClick={handleIncrease}
+                      className="px-2 text-lg font-bold text-gray-600 hover:text-black"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

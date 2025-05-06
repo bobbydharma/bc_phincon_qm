@@ -16,7 +16,7 @@ export const getAllProducts = createAsyncThunk("products/getAllProducts", async 
     }
 });
 
-export const getProductById = createAsyncThunk("products/getProductById", async (id: number, { rejectWithValue }) => {
+export const getProductById = createAsyncThunk("products/getProductById", async (id: string, { rejectWithValue }) => {
     try {
         const response = await ProductAPI.getById(id);
         return response;
@@ -30,7 +30,7 @@ export const createProduct = createAsyncThunk("products/createProduct", async (p
         const newProductData = {
             name: productData.name,
             price: productData.price,
-            category: productData.category,
+            category: productData.categoryId,
             image: productData.image?.trim() || imageUrlDefault,
             stock: productData.stock,
         };
@@ -52,7 +52,7 @@ export const updateProduct = createAsyncThunk("products/updateProduct", async (p
     }
 });
 
-export const deleteProduct = createAsyncThunk("products/deleteProduct", async (productId: number, { rejectWithValue }) => {
+export const deleteProduct = createAsyncThunk("products/deleteProduct", async (productId: string, { rejectWithValue }) => {
     try {
         const response = await ProductAPI.delete(productId);
         console.log("deleteProduct",response);
@@ -80,7 +80,6 @@ const productSlice = createSlice({
             .addCase(getAllProducts.pending, (state) => {
                 state.loading = true;
                 state.error = null;
-                state.status = "pending";
             })
             .addCase(getAllProducts.fulfilled, (state, action) => {
                 state.loading = false;
