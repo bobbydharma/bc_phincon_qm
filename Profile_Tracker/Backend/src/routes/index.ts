@@ -1,0 +1,19 @@
+import express from "express";
+import courseRouter from "./course.route.js";
+import tryoutSectionRouter from "./tryout_section.route.js";
+import progressRouter from "./progress.route.js";
+import userRoute from "./user.route.js";
+import profileRoute from "./profile.route.js";
+import authRoute from "./auth.route.js";
+const router = express.Router();
+
+
+
+router.use("/running-courses", courseRouter);
+router.use("/running-tryout-sections", tryoutSectionRouter);
+router.use("/progress", progressRouter);
+router.use("/users", userRoute)
+router.use("/profiles", profileRoute)
+router.use("/auth",  authRoute);
+
+export default router;
